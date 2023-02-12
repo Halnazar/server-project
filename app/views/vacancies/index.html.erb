@@ -1,0 +1,251 @@
+
+
+<div class="ui grid">
+
+  <div class="row"></div>
+
+  <div class="one wide column">
+
+  </div>
+
+  <div class="fourteen wide column">
+    <div class="ui piled segment">
+
+    <div class="ui  grid">
+
+      <div class="ui two wide column  " >
+
+        <div class="ui center aligned container">
+
+        <h2 class="ui icon header ">
+          <i class="users icon"></i>
+          <div class="content">
+            Вакансии
+
+          <div class="ui divider"></div>
+
+            <div class="sub header ui statistics ">
+
+              <div class="">
+
+              <div class="red statistic ">
+                <div class="value">
+                  <%= Vacancy.opened.count %>
+                </div>
+                <div class="label">
+                    <center>
+                  Открытые
+                        </center>
+                </div>
+              </div>
+
+              <div class="olive statistic">
+                <div class="value">
+                  <%= Vacancy.closed.count %>
+                </div>
+                <div class="label">
+                  <center>
+                  Закрытые
+                  </center>
+                </div>
+              </div>
+
+              <div class="grey statistic">
+
+                <div class="value">
+                  <%= Vacancy.count %>
+                </div>
+                <div class="label">
+                    <center>
+                  Все
+                        </center>
+                </div>
+              </div>
+
+
+              </div>
+
+
+            </div>
+          </div>
+        </h2>
+
+
+      </div>
+      </div>
+
+
+      <div class="fourteen wide column">
+
+        <table class="ui compact celled definition table">
+<thead>
+  <tr>
+    <th>№</th>
+    <th>Позиция</th>
+    <th class=" center aligned">Дата открытия</th>
+    <th class=" center aligned">Дата закрытия</th>
+    <th class=" center aligned">Статус</th>
+    <th class=" center aligned">Кандидаты</th>
+  </tr>
+</thead>
+
+<tbody>
+
+  <% @v.each_with_index do |v, idx| %>
+
+  <tr>
+    <td class="collapsing center aligned">
+      <%= idx+1 %>
+    </td>
+    <td ><%= v.position.name %></td>
+    <td class=" center aligned"><%= v.opening_date %></td>
+
+      <% if v.closing_date.nil? %>
+        <td class=" center aligned disabled">Открыта</td>
+      <% else %>
+        <td class=" center aligned"><%= v.closing_date %></td>
+      <%  end %>
+
+  <% if v.status %>
+      <td class=" center aligned">
+            <i class="icon checkmark"></i> Закрыта
+      </td>
+  <% else %>
+      <td class=" center aligned negative">
+            <i class="icon close"></i> Открыта
+      </td>
+  <% end %>
+
+      <td class=" center aligned ">
+        <%= link_to candidates_path(:vacancy_id => v.id), method: "get", class: "circular ui tiny icon button" do %>
+            <i class="icon user circle"></i>
+        <% end %>
+      </td>
+
+
+
+  </tr>
+
+  <% end %>
+
+</tbody>
+
+
+
+<tfoot class="full-width">
+  <tr>
+    <th></th>
+    <th></th>
+    <th colspan="4">
+
+      <div class="ui right floated small primary labeled icon button" id="createVacancyId">
+          <i class="plus square outline icon"></i>Открыть вакансию
+        </div>
+
+    </th>
+  </tr>
+</tfoot>
+</table>
+
+      </div>
+
+    </div>
+
+    </div>
+
+  </div>
+
+  <div class="one wide column">
+
+  </div>
+
+</div>
+
+
+
+
+<div class="ui mini modal create-vacancy">
+  <div class="header"><center>Новая вакансия</center></div>
+  <div class="content">
+    <div class="ui form">
+            <div class="field">
+                <label>Выберите позицию:</label>
+                <div class="ui selection dropdown">
+                    <input type="hidden" name="position" class="position_input">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Позиция</div>
+                    <div class="menu">
+                      <% @p.each do |p| %>
+                        <div class="item" data-value="<%= p.name %>" selected><%= p.name %></div>
+                      <% end %>
+                    </div>
+                </div>
+            </div>
+</div>
+  </div>
+  <div class="actions">
+    <div class="ui approve primary button" id="createVacancyModalId">Открыть вакансию</div>
+  </div>
+</div>
+
+
+
+<div class="ui basic modal">
+  <div class="ui icon header">
+    <i class="angellist icon"></i>
+    <br>
+    <h1 class="ui header" style="color:white">Здравствуй, <%= current_user.admin_prefix + current_user.name %>!</h1><br>
+    <h3 class="ui header" style="color:white">"<%= random_joke %>"</h3><br>
+    <h1 class="ui header" style="color:white">Хорошего дня!</h1>
+
+  </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+      $('.dropdown')
+          .dropdown()
+        ;
+
+        $("#createVacancyId").click(function(){
+          $('.ui.mini.modal.create-vacancy')
+          .modal('show');
+         });
+
+     $("#createVacancyModalId").click(function(){
+       var gf = $('.position_input')[0]
+
+       var dataaa = {"position_name" : gf.value,
+                     "authenticity_token" : $('[name="csrf-token"]')[0].content}
+           $.ajax({
+               type:"POST",
+               url:"http://localhost:3000/vacancies",
+               data: JSON.stringify(dataaa),
+               contentType: 'application/json',
+               success: function(res) {
+                   console.log(res);
+                   console.log("Sent");
+               }.bind(this),
+               error: function(xhr, status, err) {
+                   console.error(xhr, status, err.toString());
+               }
+           });
+
+
+      });
+
+
+    });
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+           <% if session.has_key?(:js_code) %>
+            <% session.delete(:js_code) %>
+            $('.ui.basic.modal').modal('show');
+          <% end %>
+      });
+</script>

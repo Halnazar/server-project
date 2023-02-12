@@ -1,0 +1,33 @@
+/* line 1, app/assets/stylesheets/devise_pages.scss */
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+
+/* line 8, app/assets/stylesheets/devise_pages.scss */
+.common-back-container {
+  background-image: url("back_1.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+/* line 17, app/assets/stylesheets/devise_pages.scss */
+.grid.container {
+  margin-top: 5em;
+}
+
+/* line 20, app/assets/stylesheets/devise_pages.scss */
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}

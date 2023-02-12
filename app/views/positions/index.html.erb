@@ -1,0 +1,215 @@
+
+
+<div class="ui grid">
+
+  <div class="row"></div>
+
+  <div class="two wide column">
+
+  </div>
+
+  <div class="twelve wide column">
+    <div class="ui piled segment">
+
+    <div class="ui  grid">
+
+      <div class="ui three wide column  " >
+
+        <div class="ui center aligned container">
+
+        <h2 class="ui icon header ">
+          <i class="address card icon"></i>
+          <div class="content">
+            Должности
+
+          <div class="ui divider"></div>
+
+            <div class="sub header ui statistics ">
+              <div class="grey statistic">
+                <div class="value">
+                  <%= Position.count %>
+                </div>
+                <div class="label">
+                    <center>
+                  Все
+                        </center>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </h2>
+
+        <div class="ui right floated small positive labeled icon button" id="createPositionId">
+          <i class="plus square outline icon"></i>Создать должность
+        </div>
+
+      </div>
+      </div>
+
+
+
+      <div class="thirteen wide column">
+
+        <table class="ui compact celled definition table">
+<thead>
+  <tr>
+    <th>№</th>
+    <th>Название</th>
+    <th class=" center aligned">Дата создания</th>
+    <th class=" center aligned"><i class="info icon"></i> Критерий / Мин.балл</th>
+  </tr>
+</thead>
+
+<tbody>
+
+  <% @p.each_with_index do |p, idx| %>
+
+  <tr>
+    <td class="collapsing center aligned" style="vertical-align: middle">
+      <%= idx+1 %>
+    </td>
+    <td class=" center aligned" style="vertical-align: middle"><%= p.name %></td>
+    <td class=" center aligned" style="vertical-align: middle"><%= p.created_at.to_date %></td>
+
+    <td class=" center aligned ">
+      <table class="ui very basic collapsing celled table">
+<thead>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+</tr>
+</thead>
+<tbody>
+
+  <% @pc.where(position: p).each do |pc| %>
+      <tr>
+        <td>
+          <%= pc.criterium.name %>
+      </td>
+        <td>
+          <div class="ui star rating" data-rating="<%= pc.score %>" ></div>
+        </td>
+        <td>
+          <%= pc.score %>
+      </td>
+      </tr>
+  <% end %>
+
+</tbody>
+</table>
+
+    </td>
+
+  </tr>
+
+  <% end %>
+
+</tbody>
+
+
+
+
+</table>
+
+      </div>
+
+    </div>
+
+    </div>
+
+  </div>
+
+  <div class="two wide column">
+
+  </div>
+
+</div>
+
+
+
+
+<div class="ui mini modal create-position">
+  <div class="header"><center>Новая должность</center></div>
+  <div class="content">
+    <div class="ui form">
+
+      <div class="field">
+          <label>Название</label>
+          <input type="text" name="name" placeholder="Новая должность" class="position_input">
+      </div>
+
+      <div class="ui horizontal divider">
+            Критерии
+      </div>
+
+      <% @c.each_with_index do |c, idx|%>
+          <div class="field">
+              <label><%= c.name %></label>
+                <div class="ui position star rating" id = "<%= "criterium_"+(idx+1).to_s %>" data-rating="1" ></div>
+          </div>
+      <% end %>
+
+</div>
+  </div>
+  <div class="actions">
+    <div class="ui approve positive button" id="createPositionModalId">Создать должность</div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+      $('.star.rating')
+          .rating({
+            initialRating: 2,
+              maxRating: 5
+          })
+
+  $('.star.rating')
+      .rating('disable');
+
+        $('.position.star.rating')
+            .rating('enable');
+
+      $('.dropdown')
+          .dropdown();
+
+        $("#createPositionId").click(function(){
+          $('.ui.mini.modal.create-position')
+          .modal('show');
+         });
+
+     $("#createPositionModalId").click(function(){
+       var gf = $('.position_input')[0]
+
+       var dataaa = {"position_name" : gf.value,
+                     "authenticity_token" : $('[name="csrf-token"]')[0].content}
+
+        <% @c.count.times do |idx| %>
+          dataaa["criterium_"+(<%= idx %> + 1)] = $('#criterium_<%= idx+1 %>').rating('get rating')
+        <% end %>
+
+           $.ajax({
+               type:"POST",
+               url:"http://localhost:3000/positions",
+               data: JSON.stringify(dataaa),
+               contentType: 'application/json',
+               success: function(res) {
+                   console.log(res);
+                   console.log("Sent");
+               }.bind(this),
+               error: function(xhr, status, err) {
+                   console.error(xhr, status, err.toString());
+               }
+           });
+
+
+      });
+
+
+    });
+</script>

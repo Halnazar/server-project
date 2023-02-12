@@ -1,0 +1,26 @@
+
+
+<div class="ui grid">
+
+  <div class="row"></div>
+
+  <div class="two wide column">
+
+  </div>
+
+  <div class="twelve wide column">
+    <div class="ui raised segment">
+
+            <%= column_chart @chart_sign_in_count_data, title: "Количество входов в CRM", xtitle: "Пользователи", ytitle: "Количество входов", height: "270px"%>
+
+          <%= column_chart @chart_orders_count_data, title: "Количество проведенных интервью", xtitle: "Пользователи", ytitle: "Количество интервью", height: "270px"%>
+
+  </div>
+  </div>
+
+  <div class="two wide column">
+
+  </div>
+
+
+</div>

@@ -1,0 +1,561 @@
+
+
+<div class="ui grid">
+
+  <div class="row"></div>
+
+  <div class="one wide column">
+
+  </div>
+
+  <div class="fourteen wide column">
+    <div class="ui piled segment">
+
+    <div class="ui  grid">
+
+      <div class="ui three wide column  " >
+
+        <div class="ui center aligned container">
+
+        <h2 class="ui icon header ">
+          <i class="address card icon"></i>
+          <div class="content">
+            <%= @prefix %> кандидаты
+
+          <div class="ui divider"></div>
+
+
+          <h4>
+
+            <div class="sub header ui statistics ">
+
+              <div class="ui  grid">
+                <div class="ui eight wide column">
+                  <div class="orange statistic ">
+                    <div class="value">
+                      <%= Candidate.rejected.count %>
+                    </div>
+                    <div class="label">
+                        <center>
+                          <%= link_to "Отклонены", candidates_path(:filter => "rejected") %>
+                            </center>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="ui eight wide column">
+                  <div class="green statistic ">
+                    <div class="value">
+                      <%= Candidate.accepted.count %>
+                    </div>
+                    <div class="label">
+                        <center>
+                      <%= link_to "Приняты", candidates_path(:filter => "accepted") %>
+                            </center>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ui eight wide column">
+                    <div class="yellow statistic ">
+                      <div class="value">
+                        <%= Candidate.reviewed.count %>
+                      </div>
+                      <div class="label">
+                          <center>
+                        <%= link_to "Рассматриваются", candidates_path(:filter => "reviewed") %>
+                              </center>
+                      </div>
+                    </div>
+                  </div>
+
+            <div class="ui eight wide column">
+              <div class="grey statistic">
+                <div class="value">
+                  <%= Candidate.count %>
+                </div>
+                <div class="label">
+                    <center>
+                      <%= link_to "Все", candidates_path %>
+                        </center>
+                </div>
+              </div>
+            </div>
+
+              </div>
+            </div>
+
+                    <div class="ui divider"></div>
+            <%= pie_chart @data_chart, {colors: [ "green", "red", "orange"]} %>
+                  <div class="ui divider"></div>
+
+          </div>
+        </h2>
+
+        <div class="ui right floated small primary labeled icon button" id="createCandidateId">
+            <i class="plus square outline icon"></i>Создать кандидата
+          </div>
+
+      </div>
+      </div>
+
+      <div class="one wide column">      </div>
+
+      <div class="twelve wide column">
+
+        <table class="ui compact celled definition table">
+<thead>
+  <tr>
+    <th class=" center aligned">Вакансия</th>
+    <th class=" center aligned">Фото</th>
+    <th class=" center aligned">Полное имя</th>
+    <th class=" center aligned">Баллов</th>
+    <th class=" center aligned">Опыт</th>
+    <th class=" center aligned"><i class="info circle icon"></i>Статус</th>
+  </tr>
+</thead>
+<tbody>
+
+
+  <% @imgs = {} %>
+
+
+  <% @c.each_with_index do |c, idx| %>
+
+    <% if c.status==2 %>
+      <tr class="positive">
+    <% elsif c.status==1  %>
+      <tr class="warning">
+      <%  else %>
+      <tr>
+    <% end %>
+
+
+
+
+
+    <td class="center aligned" style="vertical-align: middle">
+      <%= link_to c.vacancy.position.name, candidates_path(:vacancy_id => c.vacancy.id) %>
+    </td>
+    <td class="center aligned" style="vertical-align: middle">
+
+
+      <% @imgs[c.id.to_s] = random_image(c.gender) %>
+      <%= image_tag(@imgs[c.id.to_s], :size => "110x110") %>
+    </td>
+    <td class="center aligned" style="vertical-align: middle">
+
+      <div class=" ui basic button" id="<%= c.id %>">
+          <i class="icon user"></i><%= c.first_name+" "+c.second_name %>
+        </div>
+
+    </td>
+    <td class="center aligned" style="vertical-align: middle"><%= c.score_sum %></td>
+    <td class="center aligned" style="vertical-align: middle"><%= c.expirience_years %></td>
+
+    <td class="center aligned" style="vertical-align: middle">
+        <% if c.status==2 %>
+          <i class="icon checkmark"></i> Принят
+        <% elsif c.status==1  %>
+          Рассматривается
+          <%  else %>
+          <i class="icon close"></i> Отклонён
+        <% end %>
+    </td>
+
+      </tr>
+  <% end %>
+
+</tbody>
+
+
+
+
+</table>
+
+      </div>
+
+    </div>
+
+    </div>
+
+  </div>
+
+  <div class="one wide column">
+
+  </div>
+
+</div>
+
+
+
+
+
+<div class="ui  modal create-candidate">
+  <div class="header"><center>Новый кандидат</center></div>
+  <div class="content">
+    <div class="ui form">
+
+      <%= form_for  Candidate.new,  html: {id: "candidate_f"}  do |f| %>
+        <div class="three fields">
+
+          <div class="field">
+            <%= f.label :avatar  %>
+            <%= f.file_field :avatar %>
+          </div>
+
+          <div class="field">
+            <label>Имя</label>
+            <input type="text" placeholder="Имя" name="first_name">
+          </div>
+
+          <div class="field">
+            <label>Фамилия</label>
+            <input type="text" placeholder="Фамилия" name="second_name">
+          </div>
+      </div>
+
+      <div class="three fields">
+
+        <div class="field">
+         <label>E-mail</label>
+         <input type="email" placeholder="Электронный ящик" name="email">
+       </div>
+
+        <div class="field">
+          <label>Телефон</label>
+          <input type="text" placeholder="Моб. телефон" name="number">
+        </div>
+
+        <div class="field">
+            <label>Пол:</label>
+            <div class="ui selection dropdown">
+                <input type="hidden" name="gender" class="gender_input">
+                <i class="dropdown icon"></i>
+                <div class="default text">Пол</div>
+                <div class="menu">
+                    <div class="item" data-value="male" selected>Мужской</div>
+                    <div class="item" data-value="female">Женский</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="two fields">
+
+      <div class="field">
+      <label>Биография</label>
+        <textarea rows="2" style="margin-top: 0px; margin-bottom: 0px; height: 76px;" name="bio"  placeholder="Биография"></textarea>
+    </div>
+
+<div class="field">
+  <label>Опыт работы</label>
+    <input type="text" name="exp"  placeholder="Опты работы">
+    </div>
+  </div>
+
+  <div class="ui horizontal divider">
+        Баллы критериев
+  </div>
+    <div class="fields">
+          <% @cr.each_with_index do |cr, idx|%>
+              <div class="field">
+                  <label><%= cr.name %></label>
+                  <input type="number" id="quantity" name="<%= "criterium_"+(idx+1).to_s %>" min="1" max="5" value="1"><br><br>
+                  </div>
+          <% end %>
+
+    </div>
+
+
+
+    <div class="ui horizontal divider">
+          Вакансия
+    </div>
+
+            <div class="field">
+                <label>Вакансия</label>
+                <div class="ui selection dropdown">
+                    <input type="hidden" name="vacancy_name" class="gender_input">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Вакансия</div>
+                    <div class="menu">
+                      <% @v.each do |v| %>
+                          <div class="item" data-value="<%= v.position.name %>" selected><%= v.position.name %></div>
+                      <% end %>
+                    </div>
+                </div>
+            </div>
+
+
+</div>
+  </div>
+  <div class="actions">
+    <%= f.submit " Создать кандидата", class: "ui approve primary button", id: "submit_button" %>
+
+  </div>
+
+      <% end %>
+</div>
+
+
+
+<% @c.each do |c| %>
+
+      <div class="ui  modal show-candidate <%= c.id %>">
+        <div class="header"><center>Кандидат <%= c.first_name+" " + c.second_name %></center></div>
+        <div class="content">
+
+      <div class="ui grid">
+
+        <div class="ui five wide column  " >
+                        <div class="ui card">
+                              <div class="image">
+                                    <%= image_tag( @imgs[c.id.to_s], :size => "110x110") %>
+                              </div>
+                              <div class="content">
+                                <a class="header"><%= c.first_name+" " + c.second_name %></a>
+                                <div class="meta">
+                                  <span class="date"><%= c.created_at.to_date %></span>
+                                </div>
+                                    <div class="description">
+                                      Статус: <%= humanize_status(c) %>
+                                        </div>
+                              </div>
+                              <div class="extra content">
+                                <a>
+                                  <i class="user icon"></i>
+                                  <%= c.vacancy.position.name %>
+                                </a>
+                              </div>
+                      </div>
+
+            <div class="ui divider"></div>
+
+              <% unless c.status==2 %>
+                <div class="ui medium buttons">
+                  <button class="ui red button" id="reject_btn_<%= c.id %>">Отклонить</button>
+                  <div class="or"></div>
+                  <button class="ui positive button" id="permit_btn_<%= c.id %>">Принять</button>
+                </div>
+                <% end %>
+
+
+        </div>
+
+        <div class="ui eleven wide column  " >
+
+          <table class="ui very basic collapsing celled table">
+            <thead>
+              <tr>
+                <th>Критерии</th>
+                <th>Кандидата</th>
+                <th>Должности</th>
+            </tr>
+            </thead>
+
+          <tbody>
+            <% c.candidate_criterium_scores.each do |cs| %>
+            <tr>
+                <td>
+                    <%= cs.criterium.name %>
+                  </td>
+              <td>
+                  <div class="ui star rating" data-rating="<%= cs.score %>" ></div>
+                </td>
+              <td>
+                  <div class="ui star rating" data-rating="<%= c.vacancy.position.position_criterium_scores.where(criterium: cs.criterium).first.score %>" ></div>
+                </td>
+            </tr>
+
+            <% end  %>
+            </tbody>
+          </table>
+
+            <div class="ui divider"></div>
+
+          <div class="ui form">
+
+
+              <div class="two fields">
+
+                <div class="field">
+                  <label>Пол:</label>
+                  <input readonly="" type="text" placeholder="Моб. телефон" name="number" value="<%= russian_gender(c) %>">
+                </div>
+
+                <div class="field">
+                  <label>Опыт работы:</label>
+                  <input readonly="" type="text" placeholder="Моб. телефон" name="number" value="<%= c.expirience_years %>">
+                </div>
+
+              </div>
+
+              <div class="ui message">
+              <div class="header">
+                Биография
+              </div>
+              <p><%= c.biography %></p>
+              </div>
+
+
+              <div class="field">
+               <label>E-mail</label>
+               <input readonly="" type="email" placeholder="Электронный ящик" name="email" value="<%= c.email %>">
+             </div>
+
+              <div class="field">
+                <label>Телефон</label>
+                <input readonly="" type="text" placeholder="Моб. телефон" name="number" value="<%= c.number %>">
+              </div>
+
+
+          </div>
+
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+
+          </div>
+      </div>
+
+<% end %>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+      <% @c.each do |c| %>
+
+      $("#<%= c.id %>").click(function(){
+        $('.ui.modal.show-candidate.<%= c.id %>')
+        .modal('show');
+       });
+
+      <% end %>
+
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+      <% @c.each do |c| %>
+
+      $("#reject_btn_<%= c.id %>").click(function(){
+
+          var dataaa = {"candidate_id" : <%= c.id %>,
+                        "reject_it" : true,
+                      "authenticity_token" : $('[name="csrf-token"]')[0].content}
+
+            $.ajax({
+              type:"PUT",
+              url:"http://localhost:3000/candidates/<%= c.id %>",
+                data: JSON.stringify(dataaa),
+                contentType: 'application/json',
+                success: function(res) {
+                    console.log(res);
+                    console.log("Sent");
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(xhr, status, err.toString());
+                }
+            });
+       });
+
+
+       $("#permit_btn_<%= c.id %>").click(function(){
+
+         var dataaa = {"candidate_id" : <%= c.id %>,
+                       "permit_it" : true,
+                     "authenticity_token" : $('[name="csrf-token"]')[0].content}
+
+           $.ajax({
+               type:"PUT",
+               url:"http://localhost:3000/candidates/<%= c.id %>",
+               data: JSON.stringify(dataaa),
+               contentType: 'application/json',
+               success: function(res) {
+                   console.log(res);
+                   console.log("Sent");
+               }.bind(this),
+               error: function(xhr, status, err) {
+                   console.error(xhr, status, err.toString());
+               }
+           });
+        });
+
+
+      <% end %>
+
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+      $('.star.rating')
+          .rating({
+            initialRating: 2,
+              maxRating: 5
+          })
+
+  $('.star.rating')
+      .rating('disable');
+
+        $('.position.star.rating')
+            .rating('enable');
+
+      $('.dropdown')
+          .dropdown();
+
+        $("#createCandidateId").click(function(){
+          $('.ui.modal.create-candidate')
+          .modal('show');
+         });
+
+     $("#createPositionModalId").click(function(){
+       var gf = $('.position_input')[0]
+
+       var dataaa = {"position_name" : gf.value,
+                     "authenticity_token" : $('[name="csrf-token"]')[0].content}
+
+        <% @c.count.times do |idx| %>
+          dataaa["criterium_"+(<%= idx %> + 1)] = $('#criterium_<%= idx+1 %>').rating('get rating')
+        <% end %>
+
+           $.ajax({
+               type:"POST",
+               url:"http://localhost:3000/positions",
+               data: JSON.stringify(dataaa),
+               contentType: 'application/json',
+               success: function(res) {
+                   console.log(res);
+                   console.log("Sent");
+               }.bind(this),
+               error: function(xhr, status, err) {
+                   console.error(xhr, status, err.toString());
+               }
+           });
+
+
+      });
+
+
+    });
+</script>

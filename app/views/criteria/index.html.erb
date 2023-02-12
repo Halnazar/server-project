@@ -1,0 +1,133 @@
+
+
+<div class="ui grid">
+
+  <div class="row"></div>
+
+  <div class="four wide column">
+
+  </div>
+
+  <div class="eight wide column">
+    <div class="ui piled segment">
+
+    <div class="ui  grid">
+
+      <div class="ui five wide column  " >
+
+        <div class="ui center aligned container">
+
+        <h2 class="ui icon header ">
+          <i class="info icon"></i>
+          <div class="content">
+            Критерии
+
+          <div class="ui divider"></div>
+
+            <div class="sub header ui statistics ">
+              <div class="teal statistic">
+                <div class="value">
+                  <%= @c.count %>
+                </div>
+                <div class="label">
+                    <center>
+                  Все
+                        </center>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </h2>
+
+        <div class="ui right floated small teal labeled icon button" id="createCriteriumId">
+          <i class="plus square outline icon"></i>Добавить критерий
+        </div>
+
+      </div>
+      </div>
+
+
+      <div class="eleven wide column">
+
+
+        <% @c.each do |c| %>
+        <div class="ui icon floating message">
+          <i class="info icon"></i>
+          <div class="content">
+            <div class="header">
+                <%= c.name %>
+            </div>
+        </div>
+      </div>
+      <% end %>
+
+
+    </div>
+
+    </div>
+
+  </div>
+
+  <div class="four wide column">
+
+  </div>
+
+</div>
+
+
+
+
+<div class="ui mini modal create-criterium">
+  <div class="header"><center>Новый критерий</center></div>
+  <div class="content">
+    <div class="ui form">
+
+      <div class="field">
+          <label>Название</label>
+          <input type="text" name="name" placeholder="Новый критерий" class="criterium_input">
+      </div>
+
+</div>
+  </div>
+  <div class="actions">
+    <div class="ui approve teal button" id="createCriteriumModalId">Добавить критерий</div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#createCriteriumId").click(function(){
+          $('.ui.mini.modal.create-criterium')
+          .modal('show');
+         });
+
+     $("#createCriteriumModalId").click(function(){
+       var gf = $('.criterium_input')[0]
+
+       var dataaa = {"criterium_name" : gf.value,
+                     "authenticity_token" : $('[name="csrf-token"]')[0].content}
+
+           $.ajax({
+               type:"POST",
+               url:"http://localhost:3000/criteria",
+               data: JSON.stringify(dataaa),
+               contentType: 'application/json',
+               success: function(res) {
+                   console.log(res);
+                   console.log("Sent");
+               }.bind(this),
+               error: function(xhr, status, err) {
+                   console.error(xhr, status, err.toString());
+               }
+           });
+
+
+      });
+
+
+    });
+</script>
